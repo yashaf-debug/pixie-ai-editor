@@ -22,29 +22,54 @@ const getApiKey = (): string => {
     throw new Error('Gemini API Key not found. Please add your key in Settings or set VITE_GEMINI_API_KEY environment variable.');
 };
 
-// Get proxy URL if configured (for geo-unblocking)
+// Get proxy URL if configured (for geo-unblocking via Vercel API)
 const getProxyUrl = (): string | undefined => {
     const proxyUrl = import.meta.env.VITE_GEMINI_PROXY_URL;
     if (proxyUrl && proxyUrl !== 'undefined' && proxyUrl !== '') {
         return proxyUrl;
     }
-    return undefined;
-};
-
-// Get base URL for API calls (proxy or direct)
-const getBaseUrl = (): string => {
-    const proxyUrl = getProxyUrl();
-    if (proxyUrl) {
-        console.log('🔄 Using Cloudflare Worker proxy:', proxyUrl);
-        return proxyUrl;
-    }
-    return 'https://generativelanguage.googleapis.com';
+    // Default to Vercel API route if no proxy specified
+    return '/api/gemini';
 };
 
 // Ensure fresh instance with latest key
-// Note: SDK doesn't support custom baseUrl, so we'll use direct fetch when proxy is needed
 const getAi = () => {
     return new GoogleGenAI({ apiKey: getApiKey() });
+};
+
+// Proxy fetch wrapper for Vercel API route (uses SDK on server-side)
+const geminiApiProxyFetch = async (model: string, contents: any, config: any): Promise<any> => {
+    const proxyUrl = getProxyUrl();
+
+    console.log('🔄 Using Vercel API proxy:', proxyUrl);
+
+    const response = await fetch(proxyUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            model,
+            contents,
+            config,
+        }),
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Proxy Error:', errorText);
+        let errorData;
+        try {
+            errorData = JSON.parse(errorText);
+        } catch {
+            errorData = { error: { message: errorText } };
+        }
+        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Proxy response received');
+    return result;
 };
 
 // Custom fetch wrapper for proxy support
