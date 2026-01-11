@@ -247,19 +247,9 @@ const runImageEdit = async (
                     };
                 }
 
-                // Add image generation config separately
-                if (config.imageConfig) {
-                    requestBody.generationConfig = requestBody.generationConfig || {};
-                    requestBody.generationConfig.responseModalities = [Modality.IMAGE];
 
-                    // imageSize and aspectRatio go directly in generationConfig for REST API
-                    if (config.imageConfig.imageSize) {
-                        requestBody.generationConfig.imageSize = config.imageConfig.imageSize;
-                    }
-                    if (config.imageConfig.aspectRatio) {
-                        requestBody.generationConfig.aspectRatio = config.imageConfig.aspectRatio;
-                    }
-                }
+                // Note: imageSize and aspectRatio are NOT supported in Gemini REST API
+                // They are SDK-only features. Images will use model defaults.
 
                 const result = await geminiApiFetch(`/v1beta/models/${model}:generateContent`, requestBody);
                 response = result as GenerateContentResponse;
