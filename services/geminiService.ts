@@ -31,16 +31,42 @@ const getProxyUrl = (): string | undefined => {
     return undefined;
 };
 
-// Ensure fresh instance with latest key and proxy support
-const getAi = () => {
-    const config: any = { apiKey: getApiKey() };
-
+// Get base URL for API calls (proxy or direct)
+const getBaseUrl = (): string => {
     const proxyUrl = getProxyUrl();
     if (proxyUrl) {
-        config.baseUrl = proxyUrl;
+        console.log('🔄 Using Cloudflare Worker proxy:', proxyUrl);
+        return proxyUrl;
+    }
+    return 'https://generativelanguage.googleapis.com';
+};
+
+// Ensure fresh instance with latest key
+// Note: SDK doesn't support custom baseUrl, so we'll use direct fetch when proxy is needed
+const getAi = () => {
+    return new GoogleGenAI({ apiKey: getApiKey() });
+};
+
+// Custom fetch wrapper for proxy support
+const geminiApiFetch = async (endpoint: string, body: any): Promise<any> => {
+    const baseUrl = getBaseUrl();
+    const apiKey = getApiKey();
+    const url = `${baseUrl}${endpoint}?key=${apiKey}`;
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return new GoogleGenAI(config);
+    return response.json();
 };
 
 //
@@ -188,11 +214,27 @@ const runImageEdit = async (
 
     while (attempt < maxAttempts) {
         try {
-            const response = await getAi().models.generateContent({
-                model: model,
-                contents: { parts },
-                config: config,
-            });
+            // Use direct fetch when proxy is configured
+            const proxyUrl = getProxyUrl();
+            let response;
+
+            if (proxyUrl) {
+                // Direct API call via proxy
+                const requestBody = {
+                    contents: [{ parts }],
+                    generationConfig: config
+                };
+                const result = await geminiApiFetch(`/v1beta/models/${model}:generateContent`, requestBody);
+                response = result as GenerateContentResponse;
+            } else {
+                // Use SDK for direct calls
+                response = await getAi().models.generateContent({
+                    model: model,
+                    contents: { parts },
+                    config: config,
+                });
+            }
+
             return extractFirstImageAsDataUrl(response);
         } catch (error: any) {
             attempt++;
