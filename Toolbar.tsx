@@ -1,12 +1,12 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import React from 'react';
 import { useLanguage } from './contexts/LanguageContext';
 import { Tool } from './types';
-import { 
+import {
     CropIcon, PaletteIcon, SunIcon, BackgroundRemoveIcon, PortraitIcon, EnhanceIcon, BatchIcon, EraserIcon, ExpandFrameIcon, LayersIcon, ChatIcon, HistoryIcon, PlayIcon
 } from './components/icons';
 import { TranslationKey } from './translations';
@@ -15,6 +15,7 @@ interface ToolbarProps {
     activeTool: Tool | null;
     onSelectTool: (tool: Tool | null) => void;
     isLoading: boolean;
+    numLayers: number;
 }
 
 const ToolButton: React.FC<{
@@ -24,19 +25,19 @@ const ToolButton: React.FC<{
     isActive: boolean;
     onClick: () => void;
     disabled?: boolean;
-}> = ({ label, tooltip, icon, isActive, onClick, disabled }) => (
+    className?: string;
+}> = ({ label, tooltip, icon, isActive, onClick, disabled, className = "" }) => (
     <button
         onClick={onClick}
         disabled={disabled}
-        className={`w-full flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors duration-200 aspect-square ${
-            isActive 
-            ? 'bg-blue-100 text-blue-700' 
-            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-        } disabled:opacity-50 disabled:cursor-not-allowed`}
+        className={`flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-all duration-200 ${isActive
+                ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 shadow-md scale-105'
+                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200'
+            } disabled:opacity-50 disabled:cursor-not-allowed active:scale-95 ${className}`}
         data-tooltip={tooltip}
     >
         {icon}
-        <span className="text-[10px] font-bold">{label}</span>
+        <span className="text-[10px] font-medium text-center leading-tight">{label}</span>
     </button>
 );
 
@@ -44,6 +45,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     activeTool,
     onSelectTool,
     isLoading,
+    numLayers,
 }) => {
     const { t } = useLanguage();
 
@@ -70,23 +72,45 @@ const Toolbar: React.FC<ToolbarProps> = ({
             onSelectTool(toolId);
         }
     };
-    
+
     return (
-        <aside className="w-24 bg-white border-r border-gray-200 flex-shrink-0 flex flex-col items-center p-2 overflow-y-auto">
-            <div className="w-full flex flex-col items-center gap-2">
-                {tools.map(tool => (
-                    <ToolButton
-                        key={tool.id}
-                        label={t(tool.labelKey)}
-                        tooltip={t(tool.tooltipKey)}
-                        icon={tool.icon}
-                        isActive={activeTool === tool.id}
-                        onClick={() => handleToolSelect(tool.id)}
-                        disabled={isLoading}
-                    />
-                ))}
-            </div>
-        </aside>
+        <>
+            {/* Mobile: Horizontal bottom bar */}
+            <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-40 safe-area-bottom">
+                <div className="flex overflow-x-auto hide-scrollbar px-2 py-2 gap-1">
+                    {tools.map(tool => (
+                        <ToolButton
+                            key={tool.id}
+                            label={t(tool.labelKey)}
+                            tooltip={t(tool.tooltipKey)}
+                            icon={tool.icon}
+                            isActive={activeTool === tool.id}
+                            onClick={() => handleToolSelect(tool.id)}
+                            disabled={isLoading}
+                            className="min-w-[64px] h-16 flex-shrink-0"
+                        />
+                    ))}
+                </div>
+            </nav>
+
+            {/* Desktop: Vertical sidebar */}
+            <aside className="hidden md:flex md:flex-col w-24 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex-shrink-0 p-2 overflow-y-auto">
+                <div className="w-full flex flex-col items-center gap-2">
+                    {tools.map(tool => (
+                        <ToolButton
+                            key={tool.id}
+                            label={t(tool.labelKey)}
+                            tooltip={t(tool.tooltipKey)}
+                            icon={tool.icon}
+                            isActive={activeTool === tool.id}
+                            onClick={() => handleToolSelect(tool.id)}
+                            disabled={isLoading}
+                            className="w-full aspect-square"
+                        />
+                    ))}
+                </div>
+            </aside>
+        </>
     );
 };
 
