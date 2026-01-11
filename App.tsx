@@ -758,7 +758,7 @@ const App: React.FC = () => {
 
             {/* Main content area - add bottom padding on mobile for bottom toolbar */}
             {/* Main content area - dynamic padding handled by ToolOptions existence or CSS */}
-            <main className="flex-grow flex flex-col h-full overflow-hidden relative">
+            <main className={`flex-grow flex flex-col h-full overflow-hidden relative ${!activeTool ? 'pb-20 md:pb-0' : ''}`}>
               <EditorHeader
                 onUndo={handleUndo}
                 onRedo={handleRedo}
