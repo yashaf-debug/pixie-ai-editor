@@ -760,7 +760,7 @@ const App: React.FC = () => {
         />;
       case 'editor':
         return (
-          <div className="w-full h-screen flex flex-col md:flex-row overflow-hidden bg-gray-50 dark:bg-gray-900">
+          <div className="w-full h-screen flex flex-col-reverse md:flex-row overflow-hidden bg-gray-50 dark:bg-gray-900">
             {/* Desktop: Sidebar on left */}
             <Toolbar
               activeTool={activeTool}

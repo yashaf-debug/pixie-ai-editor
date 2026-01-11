@@ -38,7 +38,7 @@ const ImageUploader: React.FC<{
             onFileSelect(e.target.files[0]);
         }
     };
-    
+
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
@@ -51,13 +51,13 @@ const ImageUploader: React.FC<{
     return (
         <div className={`flex flex-col items-center gap-2 ${compact ? 'w-full' : ''}`}>
             {!compact && <h3 className="font-bold text-lg text-center dark:text-gray-200">{title}</h3>}
-             <div 
-                className={`relative w-full rounded-lg shadow-sm border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center p-4 transition-all duration-200 ${isDraggingOver ? 'border-blue-500 ring-2 ring-blue-200' : 'hover:border-blue-400'} ${compact ? 'aspect-square' : 'aspect-[9/16]'} dark:bg-gray-800 dark:border-gray-600`}
+            <div
+                className={`relative w-full rounded-lg shadow-sm border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center p-4 transition-all duration-200 ${isDraggingOver ? 'border-blue-500 ring-2 ring-blue-200' : 'hover:border-blue-400'} ${compact ? 'aspect-square' : 'min-h-[40vh] md:aspect-[9/16]'} dark:bg-gray-800 dark:border-gray-600`}
                 onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
                 onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
                 onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(false); }}
                 onDrop={handleDrop}
-             >
+            >
                 {previewUrl ? (
                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover rounded-md" />
                 ) : (
@@ -67,8 +67,8 @@ const ImageUploader: React.FC<{
                         {compact && <p className="text-xs mt-1">Add Item</p>}
                     </div>
                 )}
-                 <input id={`upload-${title.replace(/\s/g, '-')}`} type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                 <label htmlFor={`upload-${title.replace(/\s/g, '-')}`} className="absolute inset-0 cursor-pointer"></label>
+                <input id={`upload-${title.replace(/\s/g, '-')}`} type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                <label htmlFor={`upload-${title.replace(/\s/g, '-')}`} className="absolute inset-0 cursor-pointer"></label>
             </div>
         </div>
     );
@@ -80,7 +80,7 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
     const [userPhoto, setUserPhoto] = useState<File | null>(null);
     const [userPhotoPreview, setUserPhotoPreview] = useState<string | null>(null);
     const [modelDescription, setModelDescription] = useState('');
-    
+
     const [clothingItems, setClothingItems] = useState<ClothingItem[]>([]);
     const [model, setModel] = useState<string>('gemini-3-pro-image-preview');
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>('9:16');
@@ -89,7 +89,7 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
     const [isLoading, setIsLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('');
     const [error, setError] = useState<string | null>(null);
-    
+
     useEffect(() => {
         return () => {
             if (userPhotoPreview) URL.revokeObjectURL(userPhotoPreview);
@@ -139,11 +139,11 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
 
             try {
                 const resultUrl = await performVirtualTryOn(
-                    userPhoto, 
+                    userPhoto,
                     clothingItems.map(({ file, instruction }) => ({ file, instruction })),
                     (step) => {
                         let progressKey = `virtualTryOn.loading_${step}` as TranslationKey;
-                         if (step === 'processing') progressKey = 'generator.generatingMessage' as any;
+                        if (step === 'processing') progressKey = 'generator.generatingMessage' as any;
                         setLoadingMessage(t(progressKey));
                     },
                     model,
@@ -161,11 +161,11 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
     };
 
     const handleEdit = () => {
-      if (resultImage) {
-          onImageSelect(dataURLtoFile(resultImage, 'virtual-try-on.png'));
-      }
+        if (resultImage) {
+            onImageSelect(dataURLtoFile(resultImage, 'virtual-try-on.png'));
+        }
     };
-    
+
     const handleStartOver = () => {
         setClothingItems(prev => {
             prev.forEach(item => URL.revokeObjectURL(item.previewUrl));
@@ -199,7 +199,7 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
         if (resultImage) {
             return (
                 <div className="flex flex-col items-center gap-4">
-                     <h3 className="font-bold text-lg dark:text-white">{t('virtualTryOn.result')}</h3>
+                    <h3 className="font-bold text-lg dark:text-white">{t('virtualTryOn.result')}</h3>
                     <img src={resultImage} alt="Virtual Try-On Result" className="w-full max-w-sm rounded-lg shadow-md object-contain max-h-[60vh]" />
                     <div className="flex items-center gap-4 mt-2">
                         <button onClick={handleStartOver} className="bg-gray-700 text-white font-bold py-2 px-6 rounded-lg hover:bg-gray-800 transition-colors">
@@ -218,7 +218,7 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* User Photo Column */}
                     <div className="flex flex-col gap-2">
-                         <ImageUploader 
+                        <ImageUploader
                             title={t('virtualTryOn.uploadUserPhoto')}
                             description={t('virtualTryOn.userPhoto_desc')}
                             onFileSelect={handleUserPhotoSelect}
@@ -239,10 +239,10 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
 
                     {/* Clothing Items Grid */}
                     <div className="flex flex-col gap-4">
-                         <h3 className="font-bold text-lg text-center dark:text-white">{t('virtualTryOn.uploadClothing')} (Total Look)</h3>
-                         <p className="text-sm text-gray-600 text-center -mt-2 dark:text-gray-400">{t('virtualTryOn.clothing_desc')}</p>
-                         
-                         <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1">
+                        <h3 className="font-bold text-lg text-center dark:text-white">{t('virtualTryOn.uploadClothing')} (Total Look)</h3>
+                        <p className="text-sm text-gray-600 text-center -mt-2 dark:text-gray-400">{t('virtualTryOn.clothing_desc')}</p>
+
+                        <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-1">
                             {clothingItems.map((item, idx) => (
                                 <div key={idx} className="flex items-start gap-3 p-2 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
                                     <div className="relative w-20 h-20 flex-shrink-0">
@@ -253,7 +253,7 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
                                     </div>
                                     <div className="flex-grow">
                                         <label className="text-xs font-semibold text-gray-500 block mb-1 dark:text-gray-400">Instructions (Optional)</label>
-                                        <textarea 
+                                        <textarea
                                             value={item.instruction}
                                             onChange={(e) => handleInstructionChange(idx, e.target.value)}
                                             placeholder="e.g., Use only the jacket..."
@@ -268,12 +268,12 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
                                     <ImageUploader title="Add Item" description="" onFileSelect={handleClothingPhotoSelect} previewUrl={null} icon={<UploadIcon className="w-6 h-6" />} compact={true} />
                                 </div>
                             )}
-                         </div>
+                        </div>
                     </div>
                 </div>
-                
+
                 <div className="w-full max-w-lg mt-4 grid grid-cols-2 gap-4">
-                     <div>
+                    <div>
                         <label className="block text-sm font-medium text-gray-600 mb-1 dark:text-gray-300">{t('generator.aspectRatio')}</label>
                         <select value={aspectRatio} onChange={(e) => setAspectRatio(e.target.value as AspectRatio)} className="form-select">
                             <option value="9:16">{t('aspectRatio.portrait9_16')}</option>
@@ -293,8 +293,8 @@ const VirtualTryOn: React.FC<VirtualTryOnProps> = ({ onBack, onImageSelect, proA
                     </div>
                 </div>
 
-                <button 
-                    onClick={handleGenerate} 
+                <button
+                    onClick={handleGenerate}
                     disabled={clothingItems.length === 0}
                     className="w-full max-w-sm flex items-center justify-center gap-2 bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors hover:bg-blue-700 disabled:bg-blue-300"
                 >
