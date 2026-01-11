@@ -48,25 +48,41 @@ const getAi = () => {
 };
 
 // Custom fetch wrapper for proxy support
-const geminiApiFetch = async (endpoint: string, body: any): Promise<any> => {
+const geminiApiFetch = async (endpoint: string, requestBody: any): Promise<any> => {
     const baseUrl = getBaseUrl();
     const apiKey = getApiKey();
+
+    // Build URL with API key as query parameter (Gemini API standard)
     const url = `${baseUrl}${endpoint}?key=${apiKey}`;
+
+    console.log('📡 Gemini API Request:', {
+        url: url.replace(apiKey, 'REDACTED'),
+        body: requestBody
+    });
 
     const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
+        console.error('❌ Gemini API Error:', errorText);
+        let errorData;
+        try {
+            errorData = JSON.parse(errorText);
+        } catch {
+            errorData = { error: { message: errorText } };
+        }
         throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
     }
 
-    return response.json();
+    const result = await response.json();
+    console.log('✅ Gemini API Response received');
+    return result;
 };
 
 //
@@ -219,11 +235,21 @@ const runImageEdit = async (
             let response;
 
             if (proxyUrl) {
-                // Direct API call via proxy
+                // Direct API call via proxy with correct Gemini REST API format
                 const requestBody = {
                     contents: [{ parts }],
-                    generationConfig: config
+                    generationConfig: {
+                        ...config,
+                        // Flatten nested config if needed
+                        ...(config.imageConfig || {})
+                    }
                 };
+
+                // Remove imageConfig from top level if it exists
+                if (requestBody.generationConfig.imageConfig) {
+                    delete requestBody.generationConfig.imageConfig;
+                }
+
                 const result = await geminiApiFetch(`/v1beta/models/${model}:generateContent`, requestBody);
                 response = result as GenerateContentResponse;
             } else {

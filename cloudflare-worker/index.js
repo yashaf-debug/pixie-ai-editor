@@ -31,22 +31,33 @@ export default {
             const headers = new Headers(request.headers);
             headers.set('Content-Type', 'application/json');
 
+            // Read the request body
+            const requestBody = await request.text();
+
             // Forward the request to Gemini API
             const geminiResponse = await fetch(geminiUrl, {
                 method: 'POST',
                 headers: headers,
-                body: request.body,
+                body: requestBody,
             });
 
-            // Clone the response and add CORS headers
-            const response = new Response(geminiResponse.body, geminiResponse);
-            response.headers.set('Access-Control-Allow-Origin', '*');
-            response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-            response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-goog-api-key');
+            // Read the response body completely
+            const responseBody = await geminiResponse.text();
 
-            return response;
+            // Create new response with CORS headers
+            return new Response(responseBody, {
+                status: geminiResponse.status,
+                statusText: geminiResponse.statusText,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-goog-api-key',
+                },
+            });
 
         } catch (error) {
+            console.error('Proxy error:', error);
             return new Response(JSON.stringify({
                 error: {
                     message: error.message || 'Proxy error',
