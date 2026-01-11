@@ -1,12 +1,19 @@
-import { GoogleGenAI, Modality } from '@google/genai';
-
 export const config = {
     runtime: 'nodejs',
-    maxDuration: 60, // 60 seconds for image generation
+    maxDuration: 60,
 };
 
 export default async function handler(req, res) {
-    // Only allow POST
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
@@ -14,16 +21,17 @@ export default async function handler(req, res) {
     try {
         const { model, contents, config } = req.body;
 
-        // Get API key from environment
         const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
 
         if (!apiKey) {
+            console.error('API key not configured');
             return res.status(500).json({ error: 'API key not configured' });
         }
 
-        console.log('🔄 Proxying request to Gemini API:', { model, hasContents: !!contents, config });
+        console.log('🔄 Proxying to Gemini:', model);
 
-        // Use full SDK on server - supports ALL features including imageSize, aspectRatio
+        // Dynamic import
+        const { GoogleGenAI } = await import('@google/genai');
         const ai = new GoogleGenAI({ apiKey });
 
         const response = await ai.models.generateContent({
@@ -32,19 +40,15 @@ export default async function handler(req, res) {
             config,
         });
 
-        console.log('✅ Gemini API response received');
-
-        // Return the full response
+        console.log('✅ Response received');
         return res.status(200).json(response);
 
     } catch (error) {
-        console.error('❌ Gemini API Error:', error);
-
+        console.error('❌ Error:', error.message);
         return res.status(500).json({
             error: {
                 message: error.message || 'Unknown error',
                 code: error.code || 500,
-                status: error.status || 'Internal Server Error',
             },
         });
     }
