@@ -110,21 +110,33 @@ const StartScreen: React.FC<StartScreenProps> = ({ onFileSelect, onGenerateClick
 
         {/* Tools Section */}
         <div className="mt-12 sm:mt-16 md:mt-24 lg:mt-32">
-          <div className="text-center">
+          <div className="text-center mb-6">
             <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">More Tools</h3>
           </div>
-          <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap lg:justify-center">
             {creatorTools.map(tool => (
-              <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className} h-11 sm:h-auto text-sm sm:text-base`}>
-                {tool.icon}
-                <span className="hidden xs:inline">{tool.label}</span>
+              <button
+                key={tool.label}
+                onClick={tool.onClick}
+                className={`btn ${tool.className} flex-col gap-2 h-auto py-4 px-2 text-center items-center justify-center bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-md transition-all rounded-xl`}
+              >
+                <div className="p-2 bg-white dark:bg-gray-700 rounded-full shadow-sm text-blue-600 dark:text-blue-400">
+                  {tool.icon}
+                </div>
+                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200">{tool.label}</span>
               </button>
             ))}
-            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 hidden sm:block mx-1 md:mx-2"></div>
             {proTools.map(tool => (
-              <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className} h-11 sm:h-auto text-sm sm:text-base`}>
-                {tool.icon}
-                <span className="hidden xs:inline">{tool.label}</span>
+              <button
+                key={tool.label}
+                onClick={tool.onClick}
+                className={`btn ${tool.className} flex-col gap-2 h-auto py-4 px-2 text-center items-center justify-center bg-gray-50 border-gray-200 dark:bg-gray-800 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-md transition-all rounded-xl`}
+              >
+                <div className="p-2 bg-white dark:bg-gray-700 rounded-full shadow-sm text-purple-600 dark:text-purple-400">
+                  {tool.icon}
+                </div>
+                <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-200">{tool.label}</span>
               </button>
             ))}
           </div>

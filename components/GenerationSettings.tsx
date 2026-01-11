@@ -26,12 +26,12 @@ const GenerationSettings: React.FC<GenerationSettingsProps> = ({
     const { t } = useLanguage();
 
     return (
-        <div className={`grid ${compact ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-4'} mb-4 animate-fade-in`}>
+        <div className={`grid ${compact ? 'grid-cols-1 gap-2' : 'grid-cols-1 sm:grid-cols-2 gap-4'} mb-4 animate-fade-in`}>
             <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1 dark:text-gray-400">Model</label>
-                <select 
-                    value={model} 
-                    onChange={(e) => setModel(e.target.value)} 
+                <select
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
                     className="form-select text-xs py-1.5"
                     disabled={disabled}
                 >
@@ -41,9 +41,9 @@ const GenerationSettings: React.FC<GenerationSettingsProps> = ({
             </div>
             <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1 dark:text-gray-400">{t('generator.aspectRatio')}</label>
-                <select 
-                    value={aspectRatio} 
-                    onChange={(e) => setAspectRatio(e.target.value as AspectRatio)} 
+                <select
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value as AspectRatio)}
                     className="form-select text-xs py-1.5"
                     disabled={disabled}
                 >
