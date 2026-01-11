@@ -60,87 +60,98 @@ const StartScreen: React.FC<StartScreenProps> = ({ onFileSelect, onGenerateClick
   ];
 
   const creatorTools = [
-      { onClick: onAIAssistantClick, icon: <ChatIcon className="w-5 h-5" />, label: t('startScreen.aiAssistantButton'), cost: CREDIT_COSTS.CHAT, className: "btn-subtle" },
-      { onClick: onGenerateVideoClick, icon: <VideoIcon className="w-5 h-5" />, label: t('startScreen.generateVideoButton'), cost: CREDIT_COSTS.GENERATE_VIDEO, className: "btn-subtle" },
-      { onClick: onVirtualTryOnClick, icon: <TryOnIcon className="w-5 h-5" />, label: t('startScreen.virtualTryOnButton'), cost: 1, className: "btn-subtle" },
+    { onClick: onAIAssistantClick, icon: <ChatIcon className="w-5 h-5" />, label: t('startScreen.aiAssistantButton'), cost: CREDIT_COSTS.CHAT, className: "btn-subtle" },
+    { onClick: onGenerateVideoClick, icon: <VideoIcon className="w-5 h-5" />, label: t('startScreen.generateVideoButton'), cost: CREDIT_COSTS.GENERATE_VIDEO, className: "btn-subtle" },
+    { onClick: onVirtualTryOnClick, icon: <TryOnIcon className="w-5 h-5" />, label: t('startScreen.virtualTryOnButton'), cost: 1, className: "btn-subtle" },
   ];
 
   const proTools = [
-      { onClick: onMyModelsClick, icon: <ModelsIcon className="w-5 h-5" />, label: t('startScreen.myModelsButton'), cost: 1, className: "btn-subtle" },
-      { onClick: onBatchGenerateClick, icon: <BatchIcon className="w-5 h-5" />, label: t('startScreen.batchButton'), cost: CREDIT_COSTS.BATCH_PER_IMAGE, className: "btn-subtle" },
-      { onClick: onBusinessClick, icon: <BriefcaseIcon className="w-5 h-5" />, label: t('startScreen.businessButton'), cost: 1, className: "btn-subtle" },
+    { onClick: onMyModelsClick, icon: <ModelsIcon className="w-5 h-5" />, label: t('startScreen.myModelsButton'), cost: 1, className: "btn-subtle" },
+    { onClick: onBatchGenerateClick, icon: <BatchIcon className="w-5 h-5" />, label: t('startScreen.batchButton'), cost: CREDIT_COSTS.BATCH_PER_IMAGE, className: "btn-subtle" },
+    { onClick: onBusinessClick, icon: <BriefcaseIcon className="w-5 h-5" />, label: t('startScreen.businessButton'), cost: 1, className: "btn-subtle" },
   ];
 
   return (
-    <div className="w-full min-h-full overflow-y-auto">
-        <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-            
-            <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="animate-fade-in text-center md:text-left">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight !leading-tight">
-                        {t('startScreen.title1')}
-                        <span className="hero-title-gradient">{t('startScreen.title2')}</span>
-                    </h1>
-                    <p className="max-w-xl mx-auto md:mx-0 mt-4 text-lg md:text-xl text-gray-600">
-                        {t('startScreen.subtitle')}
-                    </p>
-                    <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                         <button onClick={onGenerateClick} className="btn btn-accent-gradient">
-                            <StarsIcon className="w-5 h-5" />
-                            {t('startScreen.generateButton')}
-                        </button>
-                        <label htmlFor="file-upload-secondary" className="btn btn-subtle">
-                            <UploadIcon className="w-5 h-5" />
-                            {t('startScreen.uploadButton')}
-                        </label>
-                        <input id="file-upload-secondary" type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
-                    </div>
-                </div>
-                <div className="hidden md:block w-full aspect-square relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <HeroVisuals />
+    <div className="w-full min-h-full overflow-y-auto pb-safe">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-24">
+
+        {/* Hero Section */}
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+          <div className="animate-fade-in text-center md:text-left">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white tracking-tight !leading-tight">
+              {t('startScreen.title1')}
+              <span className="hero-title-gradient block mt-2">{t('startScreen.title2')}</span>
+            </h1>
+            <p className="max-w-xl mx-auto md:mx-0 mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400">
+              {t('startScreen.subtitle')}
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
+              <button onClick={onGenerateClick} className="btn btn-accent-gradient h-12 sm:h-auto text-base sm:text-sm">
+                <StarsIcon className="w-5 h-5" />
+                {t('startScreen.generateButton')}
+              </button>
+              <label htmlFor="file-upload-secondary" className="btn btn-subtle h-12 sm:h-auto text-base sm:text-sm cursor-pointer">
+                <UploadIcon className="w-5 h-5" />
+                {t('startScreen.uploadButton')}
+              </label>
+              <input id="file-upload-secondary" type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+            </div>
+          </div>
+
+          {/* Hero Visual - Hidden on mobile */}
+          <div className="hidden md:block w-full aspect-square relative">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <HeroVisuals />
+            </div>
+          </div>
+        </div>
+
+        {/* Tools Section */}
+        <div className="mt-12 sm:mt-16 md:mt-24 lg:mt-32">
+          <div className="text-center">
+            <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">More Tools</h3>
+          </div>
+          <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4">
+            {creatorTools.map(tool => (
+              <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className} h-11 sm:h-auto text-sm sm:text-base`}>
+                {tool.icon}
+                <span className="hidden xs:inline">{tool.label}</span>
+              </button>
+            ))}
+            <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 hidden sm:block mx-1 md:mx-2"></div>
+            {proTools.map(tool => (
+              <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className} h-11 sm:h-auto text-sm sm:text-base`}>
+                {tool.icon}
+                <span className="hidden xs:inline">{tool.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div className="mt-12 sm:mt-16 md:mt-24 lg:mt-32">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+            {features.map((feature, index) => (
+              <div key={index} className="group relative bg-white dark:bg-gray-800 p-5 sm:p-6 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="relative z-10">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${feature.color} dark:opacity-90`}>
+                    {feature.icon}
                   </div>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white mt-4">{feature.title}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1 sm:mt-2 text-sm">{feature.desc}</p>
                 </div>
-            </div>
-
-            <div className="mt-20 md:mt-32">
-                 <div className="text-center">
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500">More Tools</h3>
-                </div>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-                    {creatorTools.map(tool => (
-                        <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className}`}>
-                            {tool.icon}
-                            <span>{tool.label}</span>
-                        </button>
-                    ))}
-                    <div className="w-px h-6 bg-gray-300 hidden sm:block mx-2"></div>
-                     {proTools.map(tool => (
-                        <button key={tool.label} onClick={tool.onClick} className={`btn ${tool.className}`}>
-                            {tool.icon}
-                            <span>{tool.label}</span>
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="mt-20 md:mt-32">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {features.map((feature, index) => (
-                        <div key={index} className="group relative bg-white p-6 rounded-lg border border-gray-200 overflow-hidden">
-                            <div className="relative z-10">
-                                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${feature.color}`}>
-                                    {feature.icon}
-                                </div>
-                                <h3 className="text-lg font-bold text-gray-800 mt-4">{feature.title}</h3>
-                                <p className="text-gray-600 mt-1 text-sm">{feature.desc}</p>
-                            </div>
-                            <img src={feature.image} alt={feature.title} className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity duration-300"/>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </main>
+                <img
+                  src={feature.image}
+                  alt={feature.title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-10 dark:group-hover:opacity-5 transition-opacity duration-300"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
     </div>
   );
 };

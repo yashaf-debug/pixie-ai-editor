@@ -61,7 +61,7 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
             let displayError: string;
             if (err instanceof Error) {
                 const lowerCaseMessage = err.message.toLowerCase();
-                 if (lowerCaseMessage.includes('resource_exhausted') || lowerCaseMessage.includes('quota')) {
+                if (lowerCaseMessage.includes('resource_exhausted') || lowerCaseMessage.includes('quota')) {
                     displayError = t('app.errorQuotaExceeded');
                 } else {
                     displayError = t('app.errorFailedToGenerateAiImage', { errorMessage: err.message });
@@ -107,36 +107,46 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-6 animate-fade-in p-4 h-full overflow-y-auto">
-            <button onClick={onBack} className="absolute top-6 left-6 flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center gap-4 sm:gap-6 animate-fade-in p-3 sm:p-4 h-full overflow-y-auto pb-safe">
+            {/* Back button */}
+            <button
+                onClick={onBack}
+                className="absolute top-4 left-4 sm:top-6 sm:left-6 flex items-center gap-2 p-2.5 sm:p-2 rounded-lg text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
                 <UndoIcon className="w-5 h-5" />
+                <span className="hidden sm:inline text-sm font-medium">Back</span>
             </button>
-            <div className="text-center mt-12 mb-4">
-                <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{t('generator.title')}</h1>
-                <p className="text-gray-600 mt-2 max-w-2xl dark:text-gray-300">{t('generator.subtitle')}</p>
+
+            {/* Title */}
+            <div className="text-center mt-14 sm:mt-12 mb-2 sm:mb-4 px-4">
+                <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{t('generator.title')}</h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-2 max-w-2xl text-sm sm:text-base">{t('generator.subtitle')}</p>
             </div>
 
-            <div className="w-full bg-white border border-gray-200 rounded-lg p-6 flex flex-col gap-6 dark:bg-gray-800 dark:border-gray-700">
+            {/* Main Form */}
+            <div className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 shadow-sm">
                 <div className="flex flex-col gap-4">
+                    {/* Prompt textarea */}
                     <div className="relative">
                         <textarea
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
                             placeholder={t('generator.placeholder')}
-                            className="form-textarea pr-10 min-h-[100px]"
+                            className="form-textarea pr-10 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
                             disabled={isLoading}
                         />
                         <button
                             type="button"
                             onClick={handleEnhanceClick}
                             disabled={isEnhancing || !prompt}
-                            className="absolute top-2 right-2 p-1 rounded-full text-purple-600 hover:bg-purple-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent dark:text-purple-400 dark:hover:bg-purple-900/30"
+                            className="absolute top-2 right-2 p-2 sm:p-1 rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 disabled:text-gray-400 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
                             data-tooltip={t('tooltip.enhancePrompt')}
                         >
                             {isEnhancing ? <Spinner className="!h-5 !w-5 !mx-0" /> : <StarsIcon className="w-5 h-5" />}
                         </button>
                     </div>
 
+                    {/* Generation Settings */}
                     <GenerationSettings
                         model={model}
                         setModel={setModel}
@@ -145,15 +155,19 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
                         disabled={isLoading}
                     />
 
+                    {/* Number of images */}
                     <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1 dark:text-gray-400">{t('generator.numImages')}</label>
-                        <div className="flex bg-gray-100 rounded-md p-0.5 dark:bg-gray-700">
+                        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">{t('generator.numImages')}</label>
+                        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
                             {[1, 2, 4].map(num => (
                                 <button
                                     key={num}
                                     onClick={() => setNumImages(num)}
                                     disabled={isLoading}
-                                    className={`flex-1 text-center text-xs font-bold py-2 rounded transition-colors ${numImages === num ? 'bg-white shadow-sm text-gray-800 dark:bg-gray-600 dark:text-white' : 'text-gray-500 hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-600'}`}
+                                    className={`flex-1 text-center text-xs sm:text-sm font-bold py-2.5 sm:py-2 rounded-md transition-all ${numImages === num
+                                            ? 'bg-white dark:bg-gray-600 shadow-sm text-gray-800 dark:text-white scale-105'
+                                            : 'text-gray-500 dark:text-gray-400 hover:bg-gray-200/50 dark:hover:bg-gray-600/50'
+                                        }`}
                                 >
                                     {num === 1 ? t('generator.numImages1') : num === 2 ? t('generator.numImages2') : t('generator.numImages4')}
                                 </button>
@@ -162,13 +176,14 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
                     </div>
                 </div>
 
+                {/* Generate button */}
                 <button
                     onClick={handleGenerate}
                     disabled={isLoading || !prompt.trim()}
-                    className="btn btn-primary w-full py-3 text-lg"
+                    className="btn btn-primary w-full py-3.5 sm:py-3 text-base sm:text-lg h-auto"
                 >
                     {isLoading ? (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 justify-center">
                             <Spinner className="!h-5 !w-5 !mx-0 text-white" />
                             <span>{t('generator.generatingMessage')}</span>
                         </div>
@@ -180,23 +195,32 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
                     )}
                 </button>
 
+                {/* Error message */}
                 {error && (
-                    <div className="p-4 bg-red-100 text-red-700 rounded-lg border border-red-200">
+                    <div className="p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg border border-red-200 dark:border-red-800 text-sm">
                         {error}
                     </div>
                 )}
 
+                {/* Generated images */}
                 {generatedImages.length > 0 && (
-                    <div className="mt-6 flex flex-col gap-4 animate-fade-in">
-                        <div className={`grid gap-4 ${generatedImages.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+                    <div className="mt-4 sm:mt-6 flex flex-col gap-4 animate-fade-in">
+                        <div className={`grid gap-3 sm:gap-4 ${generatedImages.length === 1 ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'}`}>
                             {generatedImages.map((img, index) => (
-                                <div key={index} className="group relative rounded-lg overflow-hidden border border-gray-200 shadow-sm dark:border-gray-700">
-                                    <img src={img.url} alt={`Generated ${index}`} className="w-full h-auto object-contain bg-gray-100 dark:bg-gray-900" />
-                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                        <button onClick={() => onImageSelect(img.file)} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors">
+                                <div key={index} className="group relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm">
+                                    <img src={img.url} alt={`Generated ${index}`} className="w-full h-auto object-contain bg-gray-50 dark:bg-gray-900" />
+                                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col sm:flex-row items-center justify-center gap-2 p-4">
+                                        <button
+                                            onClick={() => onImageSelect(img.file)}
+                                            className="bg-indigo-600 text-white px-4 py-2.5 sm:py-2 rounded-lg font-semibold hover:bg-indigo-700 transition-colors w-full sm:w-auto text-sm"
+                                        >
                                             {t('generator.editInEditor')}
                                         </button>
-                                        <a href={img.url} download={`generated-${index}.png`} className="bg-gray-700 text-white px-4 py-2 rounded-lg font-bold hover:bg-gray-800 transition-colors">
+                                        <a
+                                            href={img.url}
+                                            download={`generated-${index}.png`}
+                                            className="bg-gray-700 text-white px-4 py-2.5 sm:py-2 rounded-lg font-semibold hover:bg-gray-800 transition-colors w-full sm:w-auto text-center text-sm"
+                                        >
                                             {t('generator.download')}
                                         </a>
                                     </div>
@@ -205,29 +229,29 @@ const ImageGenerator: React.FC<ImageGeneratorProps> = ({ onBack, onImageSelect, 
                         </div>
 
                         {/* Text Generation Section */}
-                        <div className="mt-8 border-t border-gray-200 pt-6 dark:border-gray-700">
-                            <h3 className="text-lg font-bold text-gray-800 mb-2 dark:text-white">{t('generator.textTitle')}</h3>
-                            <div className="flex gap-2">
+                        <div className="mt-6 sm:mt-8 border-t border-gray-200 dark:border-gray-700 pt-4 sm:pt-6">
+                            <h3 className="text-base sm:text-lg font-bold text-gray-800 dark:text-white mb-3 sm:mb-2">{t('generator.textTitle')}</h3>
+                            <div className="flex flex-col sm:flex-row gap-2">
                                 <input
                                     type="text"
                                     value={textPrompt}
                                     onChange={(e) => setTextPrompt(e.target.value)}
                                     placeholder={t('generator.textPlaceholder')}
-                                    className="form-input"
+                                    className="form-input text-sm sm:text-base"
                                     disabled={isGeneratingText}
                                 />
                                 <button
                                     onClick={handleGenerateText}
                                     disabled={isGeneratingText || !textPrompt.trim()}
-                                    className="btn btn-secondary whitespace-nowrap"
+                                    className="btn btn-secondary whitespace-nowrap h-11 sm:h-auto text-sm sm:text-base"
                                 >
                                     {isGeneratingText ? <Spinner className="!h-4 !w-4 !mx-0" /> : t('generator.textGenerateButton')}
                                 </button>
                             </div>
-                            {textError && <p className="text-red-500 text-sm mt-2">{textError}</p>}
+                            {textError && <p className="text-red-500 dark:text-red-400 text-sm mt-2">{textError}</p>}
                             {generatedText && (
-                                <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-                                    <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap">{generatedText}</p>
+                                <div className="mt-4 p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
+                                    <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap text-sm sm:text-base">{generatedText}</p>
                                 </div>
                             )}
                         </div>
