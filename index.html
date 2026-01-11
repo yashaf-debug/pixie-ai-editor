@@ -1,286 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pixshop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              gray: {
-                750: '#2d3748',
-                850: '#1a202c',
-                950: '#0d1117',
-              }
-            }
-          }
-        }
-      }
-    </script>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixshop</title>
+  <!-- Tailwind now loaded via index.css -->
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://esm.sh/react-image-crop@^11.0.6/dist/ReactCrop.css" />
-<style>
-:root {
-    --color-primary: #4f46e5;
-    --color-primary-hover: #4338ca;
-    --color-accent-start: #3b82f6;
-    --color-accent-end: #8b5cf6;
-    --color-dark: #111827;
-    --color-light: #f9fafb;
-    --color-text: #374151;
-    --color-text-light: #6b7280;
-    --body-bg: #f9fafb;
-    --font-sans: 'Inter', sans-serif;
-}
+  <!-- Tailwind config now in tailwind.config.js -->
 
-.dark {
-    --body-bg: #111827;
-    --color-text: #f9fafb;
-    --color-text-light: #9ca3af;
-}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://esm.sh/react-image-crop@^11.0.6/dist/ReactCrop.css" />
+  <style>
+    :root {
+      --color-primary: #4f46e5;
+      --color-primary-hover: #4338ca;
+      --color-accent-start: #3b82f6;
+      --color-accent-end: #8b5cf6;
+      --color-dark: #111827;
+      --color-light: #f9fafb;
+      --color-text: #374151;
+      --color-text-light: #6b7280;
+      --body-bg: #f9fafb;
+      --font-sans: 'Inter', sans-serif;
+    }
 
-body {
-    font-family: var(--font-sans);
-    background-color: var(--body-bg);
-    color: var(--color-text);
-    overflow-x: hidden;
-    transition: background-color 0.2s, color 0.2s;
-}
+    .dark {
+      --body-bg: #111827;
+      --color-text: #f9fafb;
+      --color-text-light: #9ca3af;
+    }
 
-.app-background {
-  background-color: var(--body-bg);
-}
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--body-bg);
+      color: var(--color-text);
+      overflow-x: hidden;
+      transition: background-color 0.2s, color 0.2s;
+    }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-.dark ::-webkit-scrollbar-track {
-    background: #1f2937;
-}
-::-webkit-scrollbar-thumb {
-    background: #c4c4c4;
-    border-radius: 10px;
-}
-.dark ::-webkit-scrollbar-thumb {
-    background: #4b5563;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
+    .app-background {
+      background-color: var(--body-bg);
+    }
 
-.checkerboard-bg {
-    background-image:
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .dark ::-webkit-scrollbar-track {
+      background: #1f2937;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #c4c4c4;
+      border-radius: 10px;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #4b5563;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    .checkerboard-bg {
+      background-image:
         linear-gradient(45deg, #E0E0E0 25%, transparent 25%),
         linear-gradient(-45deg, #E0E0E0 25%, transparent 25%),
         linear-gradient(45deg, transparent 75%, #E0E0E0 75%),
         linear-gradient(-45deg, transparent 75%, #E0E0E0 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    background-color: #FAFAFA;
-}
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      background-color: #FAFAFA;
+    }
 
-.dark .checkerboard-bg {
-    background-image:
+    .dark .checkerboard-bg {
+      background-image:
         linear-gradient(45deg, #374151 25%, transparent 25%),
         linear-gradient(-45deg, #374151 25%, transparent 25%),
         linear-gradient(45deg, transparent 75%, #374151 75%),
         linear-gradient(-45deg, transparent 75%, #374151 75%);
-    background-color: #1f2937;
-}
+      background-color: #1f2937;
+    }
 
-.animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
-}
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
 
-.touch-none {
-    touch-action: none;
-}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-/* React-Image-Crop Override for Figma style */
-.ReactCrop__crop-selection {
-  border: 1px solid var(--color-primary);
-}
+    .touch-none {
+      touch-action: none;
+    }
 
-.ReactCrop__drag-handle {
-    background-color: white;
-    border: 1px solid var(--color-primary);
-    width: 8px;
-    height: 8px;
-}
+    /* React-Image-Crop Override for Figma style */
+    .ReactCrop__crop-selection {
+      border: 1px solid var(--color-primary);
+    }
 
-/* Tooltip Styles */
-[data-tooltip] {
-    position: relative;
-    cursor: pointer;
-}
-[data-tooltip]::before {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-8px);
-    background-color: var(--color-dark);
-    color: #FFFFFF;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-    z-index: 100;
-}
-.dark [data-tooltip]::before {
-    background-color: #f9fafb;
-    color: #111827;
-}
-[data-tooltip]:hover::before {
-    opacity: 1;
-    transform: translateX(-50%) translateY(-4px);
-}
+    .ReactCrop__drag-handle {
+      background-color: white;
+      border: 1px solid var(--color-primary);
+      width: 8px;
+      height: 8px;
+    }
 
-/* New Hero Visuals Style */
-@keyframes hero-image-fade {
-  0%, 100% { opacity: 0; transform: scale(1.05); }
-  10%, 90% { opacity: 1; transform: scale(1); }
-}
+    /* Tooltip Styles */
+    [data-tooltip] {
+      position: relative;
+      cursor: pointer;
+    }
 
-.hero-visuals-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  transform: rotate(-10deg) scale(1.1);
-}
+    [data-tooltip]::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background-color: var(--color-dark);
+      color: #FFFFFF;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+      z-index: 100;
+    }
 
-.hero-visual-item {
-  aspect-ratio: 1/1;
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-  animation: hero-image-fade 18s infinite;
-}
+    .dark [data-tooltip]::before {
+      background-color: #f9fafb;
+      color: #111827;
+    }
 
-.hero-visual-item:nth-child(2) { animation-delay: 3s; }
-.hero-visual-item:nth-child(3) { animation-delay: 6s; }
-.hero-visual-item:nth-child(4) { animation-delay: 9s; }
-.hero-visual-item:nth-child(5) { animation-delay: 12s; }
-.hero-visual-item:nth-child(6) { animation-delay: 15s; }
+    [data-tooltip]:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(-4px);
+    }
 
-.hero-title-gradient {
-  background: linear-gradient(90deg, var(--color-accent-start), var(--color-accent-end));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+    /* New Hero Visuals Style */
+    @keyframes hero-image-fade {
 
-/* New Button Styles */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-  border: 1px solid transparent;
-}
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.btn:active {
-  transform: scale(0.97);
-}
+      0%,
+      100% {
+        opacity: 0;
+        transform: scale(1.05);
+      }
 
-.btn-primary {
-  background-color: var(--color-primary);
-  color: white;
-}
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--color-primary-hover);
-  box-shadow: 0 4px 14px 0 rgb(0 0 0 / 0.1);
-}
+      10%,
+      90% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
 
-.btn-accent-gradient {
-  background: linear-gradient(90deg, var(--color-accent-start), var(--color-accent-end));
-  color: white;
-}
-.btn-accent-gradient:hover:not(:disabled) {
-  box-shadow: 0 4px 14px 0 rgb(0 0 0 / 0.1);
-  filter: brightness(1.1);
-}
+    .hero-visuals-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      transform: rotate(-10deg) scale(1.1);
+    }
 
-.btn-secondary {
-  background-color: var(--color-dark);
-  color: white;
-}
-.dark .btn-secondary {
-    background-color: #374151;
-}
-.btn-secondary:hover:not(:disabled) {
-  background-color: #374151;
-}
-.dark .btn-secondary:hover:not(:disabled) {
-    background-color: #4b5563;
-}
+    .hero-visual-item {
+      aspect-ratio: 1/1;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      animation: hero-image-fade 18s infinite;
+    }
 
-.btn-subtle {
-    background-color: transparent;
-    color: var(--color-text);
-    border-color: #d1d5db; /* gray-300 */
-}
-.dark .btn-subtle {
-    color: #e5e7eb;
-    border-color: #4b5563;
-}
-.btn-subtle:hover:not(:disabled) {
-    background-color: #f3f4f6; /* gray-100 */
-    border-color: #9ca3af; /* gray-400 */
-}
-.dark .btn-subtle:hover:not(:disabled) {
-    background-color: #1f2937;
-    border-color: #6b7280;
-}
+    .hero-visual-item:nth-child(2) {
+      animation-delay: 3s;
+    }
 
-/* Form Styles */
-.form-input {
-    @apply w-full bg-white border border-gray-300 text-gray-800 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-60 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:ring-indigo-400;
-}
-.form-textarea {
-    @apply form-input resize-y;
-}
-.form-select {
-    @apply w-full bg-white border border-gray-300 text-gray-800 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-60 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white;
-}
-input[type="range"] {
-    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 dark:bg-gray-700;
-}
-input[type="checkbox"] {
-    @apply w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600;
-}
+    .hero-visual-item:nth-child(3) {
+      animation-delay: 6s;
+    }
 
-</style>
+    .hero-visual-item:nth-child(4) {
+      animation-delay: 9s;
+    }
+
+    .hero-visual-item:nth-child(5) {
+      animation-delay: 12s;
+    }
+
+    .hero-visual-item:nth-child(6) {
+      animation-delay: 15s;
+    }
+
+    .hero-title-gradient {
+      background: linear-gradient(90deg, var(--color-accent-start), var(--color-accent-end));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* New Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      box-shadow: 0 4px 14px 0 rgb(0 0 0 / 0.1);
+    }
+
+    .btn-accent-gradient {
+      background: linear-gradient(90deg, var(--color-accent-start), var(--color-accent-end));
+      color: white;
+    }
+
+    .btn-accent-gradient:hover:not(:disabled) {
+      box-shadow: 0 4px 14px 0 rgb(0 0 0 / 0.1);
+      filter: brightness(1.1);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-dark);
+      color: white;
+    }
+
+    .dark .btn-secondary {
+      background-color: #374151;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #374151;
+    }
+
+    .dark .btn-secondary:hover:not(:disabled) {
+      background-color: #4b5563;
+    }
+
+    .btn-subtle {
+      background-color: transparent;
+      color: var(--color-text);
+      border-color: #d1d5db;
+      /* gray-300 */
+    }
+
+    .dark .btn-subtle {
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+
+    .btn-subtle:hover:not(:disabled) {
+      background-color: #f3f4f6;
+      /* gray-100 */
+      border-color: #9ca3af;
+      /* gray-400 */
+    }
+
+    .dark .btn-subtle:hover:not(:disabled) {
+      background-color: #1f2937;
+      border-color: #6b7280;
+    }
+
+    /* Form Styles */
+    .form-input {
+      @apply w-full bg-white border border-gray-300 text-gray-800 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-60 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:focus:ring-indigo-400;
+    }
+
+    .form-textarea {
+      @apply form-input resize-y;
+    }
+
+    .form-select {
+      @apply w-full bg-white border border-gray-300 text-gray-800 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-60 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white;
+    }
+
+    input[type="range"] {
+      @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 dark:bg-gray-700;
+    }
+
+    input[type="checkbox"] {
+      @apply w-4 h-4 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600;
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -298,10 +340,12 @@ input[type="checkbox"] {
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>
