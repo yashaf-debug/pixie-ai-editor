@@ -72,43 +72,7 @@ const geminiApiProxyFetch = async (model: string, contents: any, config: any): P
     return result;
 };
 
-// Custom fetch wrapper for proxy support
-const geminiApiFetch = async (endpoint: string, requestBody: any): Promise<any> => {
 
-    const apiKey = getApiKey();
-
-    // Build URL with API key as query parameter (Gemini API standard)
-    const url = `${baseUrl}${endpoint}?key=${apiKey}`;
-
-    console.log('📡 Gemini API Request:', {
-        url: url.replace(apiKey, 'REDACTED'),
-        body: requestBody
-    });
-
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Gemini API Error:', errorText);
-        let errorData;
-        try {
-            errorData = JSON.parse(errorText);
-        } catch {
-            errorData = { error: { message: errorText } };
-        }
-        throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log('✅ Gemini API Response received');
-    return result;
-};
 
 //
 // Helper Functions
