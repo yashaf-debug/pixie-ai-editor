@@ -442,36 +442,60 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         );
     }
 
-    // Pinch to zoom logic
+    // Pinch to zoom and Pan logic
     const touchStartDist = useRef<number | null>(null);
+    const touchStartCenter = useRef<{ x: number, y: number } | null>(null);
 
     const handleTouchStart = (e: React.TouchEvent) => {
         if (e.touches.length === 2) {
+            // Calculate distance for zoom
             const dist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
                 e.touches[0].clientY - e.touches[1].clientY
             );
             touchStartDist.current = dist;
+
+            // Calculate center for pan
+            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            touchStartCenter.current = { x: centerX, y: centerY };
         }
     };
 
     const handleTouchMove = (e: React.TouchEvent) => {
-        if (e.touches.length === 2 && touchStartDist.current !== null) {
+        if (e.touches.length === 2 && touchStartDist.current !== null && touchStartCenter.current !== null) {
+            e.preventDefault(); // Prevent native page scrolling
+
+            // 1. Handle Zoom
             const dist = Math.hypot(
                 e.touches[0].clientX - e.touches[1].clientX,
                 e.touches[0].clientY - e.touches[1].clientY
             );
 
-            const delta = dist / touchStartDist.current;
-            const newZoom = Math.max(0.1, Math.min(5, zoom * delta)); // Limit zoom level
-
+            const deltaZoom = dist / touchStartDist.current;
+            const newZoom = Math.max(0.1, Math.min(5, zoom * deltaZoom)); // Limit zoom level
             onZoomChange(newZoom);
             touchStartDist.current = dist; // Update for continuous zoom
+
+            // 2. Handle Pan
+            const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+            const deltaX = centerX - touchStartCenter.current.x;
+            const deltaY = centerY - touchStartCenter.current.y;
+
+            if (canvasContainerRef.current) {
+                canvasContainerRef.current.scrollLeft -= deltaX;
+                canvasContainerRef.current.scrollTop -= deltaY;
+            }
+
+            touchStartCenter.current = { x: centerX, y: centerY };
         }
     };
 
     const handleTouchEnd = () => {
         touchStartDist.current = null;
+        touchStartCenter.current = null;
     };
 
     return (

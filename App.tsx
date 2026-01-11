@@ -14,19 +14,22 @@ import ToolOptions from './components/ToolOptions';
 import EditorCanvas, { EditorCanvasRef } from './components/EditorCanvas';
 import GalleryModal from './components/GalleryModal';
 import ModelLibraryModal from './components/ModelLibraryModal';
-import ImageGenerator from './components/ImageGenerator';
-import VideoGenerator from './components/VideoGenerator';
-import BusinessToolsHub from './components/BusinessToolsHub';
-import MarketingWizard from './components/MarketingWizard';
-import ContentPlanGenerator from './components/ContentPlanGenerator';
-import ProductStudio from './components/ProductStudio';
-import BatchGenerator, { BatchGeneratorRef } from './components/BatchProcessor';
-import AIAssistant from './components/AIAssistant';
-import RestoreSessionModal from './components/RestoreSessionModal';
-import PasswordModal from './components/PasswordModal';
-import ModelDresser from './components/ModelDresser';
-import VirtualTryOn from './components/VirtualTryOn';
-import SettingsModal from './components/SettingsModal';
+import Spinner from './components/Spinner'; // Ensure Spinner is imported or available
+
+// Lazy load heavy components
+const ImageGenerator = React.lazy(() => import('./components/ImageGenerator'));
+const VideoGenerator = React.lazy(() => import('./components/VideoGenerator'));
+const BusinessToolsHub = React.lazy(() => import('./components/BusinessToolsHub'));
+const MarketingWizard = React.lazy(() => import('./components/MarketingWizard'));
+const ContentPlanGenerator = React.lazy(() => import('./components/ContentPlanGenerator'));
+const ProductStudio = React.lazy(() => import('./components/ProductStudio'));
+const BatchGenerator = React.lazy(() => import('./components/BatchProcessor'));
+const AIAssistant = React.lazy(() => import('./components/AIAssistant'));
+const RestoreSessionModal = React.lazy(() => import('./components/RestoreSessionModal'));
+const PasswordModal = React.lazy(() => import('./components/PasswordModal'));
+const ModelDresser = React.lazy(() => import('./components/ModelDresser'));
+const VirtualTryOn = React.lazy(() => import('./components/VirtualTryOn'));
+const SettingsModal = React.lazy(() => import('./components/SettingsModal'));
 import { AppMode, Tool, ChatMessage, BrandKit, Layer, AspectRatio, ImageModel } from './types';
 import { fileToDataURL, dataURLtoFile, getCroppedImg } from './utils';
 import * as geminiService from './services/geminiService';
@@ -870,7 +873,13 @@ const App: React.FC = () => {
         />
       )}
 
-      {renderContent()}
+      <React.Suspense fallback={
+        <div className="flex h-screen w-full items-center justify-center">
+          <Spinner />
+        </div>
+      }>
+        {renderContent()}
+      </React.Suspense>
 
       <GalleryModal
         isOpen={isGalleryOpen}
