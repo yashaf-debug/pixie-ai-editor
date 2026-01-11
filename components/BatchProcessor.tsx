@@ -323,95 +323,96 @@ const BatchGenerator = forwardRef<BatchGeneratorRef, BatchGeneratorProps>(({ onE
         </div>
     );
 
-    <div
-        className={`w-full h-full min-h-[30vh] md:min-h-[60vh] flex flex-col items-center justify-center text-center p-8 transition-all duration-300 rounded-lg border-2 border-dashed ${isDraggingOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white'}`}
-    >
-        <CameraIcon className="w-16 h-16 text-gray-400 mb-4" />
-        <label htmlFor="file-upload" className="font-semibold text-blue-600 cursor-pointer hover:underline text-lg">{mode === 'photoshoot' ? t('batchGenerator.uploadClothingItems') : t('batchGenerator.uploadButton')}</label>
-        <p className="text-gray-500 mt-1 text-sm">{t('startScreen.dragDrop')}</p>
-    </div>
+    const renderUploadPlaceholder = () => (
+        <div
+            className={`w-full h-full min-h-[30vh] md:min-h-[60vh] flex flex-col items-center justify-center text-center p-8 transition-all duration-300 rounded-lg border-2 border-dashed ${isDraggingOver ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white'}`}
+        >
+            <CameraIcon className="w-16 h-16 text-gray-400 mb-4" />
+            <label htmlFor="file-upload" className="font-semibold text-blue-600 cursor-pointer hover:underline text-lg">{mode === 'photoshoot' ? t('batchGenerator.uploadClothingItems') : t('batchGenerator.uploadButton')}</label>
+            <p className="text-gray-500 mt-1 text-sm">{t('startScreen.dragDrop')}</p>
+        </div>
     );
 
-return (
-    <div className="w-full h-full flex flex-col animate-fade-in bg-gray-50">
-        <header className="flex-shrink-0 bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
-            <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
-                <div>
-                    <h1 className="text-xl font-bold text-gray-900">{t('batchGenerator.title')}</h1>
-                    <div className="flex items-center border border-gray-200 rounded-md p-0.5 mt-2">
-                        <button onClick={() => setMode('photoshoot')} className={`px-3 py-1 text-sm font-semibold rounded ${mode === 'photoshoot' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{t('batchGenerator.modePhotoshoot')}</button>
-                        <button onClick={() => setMode('batch')} className={`px-3 py-1 text-sm font-semibold rounded ${mode === 'batch' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{t('batchGenerator.modeBatch')}</button>
+    return (
+        <div className="w-full h-full flex flex-col animate-fade-in bg-gray-50">
+            <header className="flex-shrink-0 bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
+                <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl font-bold text-gray-900">{t('batchGenerator.title')}</h1>
+                        <div className="flex items-center border border-gray-200 rounded-md p-0.5 mt-2">
+                            <button onClick={() => setMode('photoshoot')} className={`px-3 py-1 text-sm font-semibold rounded ${mode === 'photoshoot' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{t('batchGenerator.modePhotoshoot')}</button>
+                            <button onClick={() => setMode('batch')} className={`px-3 py-1 text-sm font-semibold rounded ${mode === 'batch' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>{t('batchGenerator.modeBatch')}</button>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <button onClick={onExit} className="btn btn-subtle">{t('marketing.backButton')}</button>
+                        <button onClick={handleGenerateAndDownload} disabled={!canGenerate} className="btn btn-primary min-w-[200px]">
+                            {isLoading ? <Spinner className="!h-5 !w-5 !mx-0" /> : <StarsIcon className="w-5 h-5" />}
+                            <span>{getStatusMessage()}</span>
+                        </button>
                     </div>
                 </div>
-                <div className="flex items-center gap-4">
-                    <button onClick={onExit} className="btn btn-subtle">{t('marketing.backButton')}</button>
-                    <button onClick={handleGenerateAndDownload} disabled={!canGenerate} className="btn btn-primary min-w-[200px]">
-                        {isLoading ? <Spinner className="!h-5 !w-5 !mx-0" /> : <StarsIcon className="w-5 h-5" />}
-                        <span>{getStatusMessage()}</span>
-                    </button>
-                </div>
-            </div>
-        </header>
+            </header>
 
-        <main
-            className="flex-grow w-full max-w-7xl mx-auto p-6 overflow-y-auto"
-            onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
-            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
-            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(false); }}
-            onDrop={(e) => {
-                e.preventDefault(); e.stopPropagation(); setIsDraggingOver(false);
-                handleFileSelect(e.dataTransfer.files);
-            }}
-        >
-            <div className="bg-white p-4 rounded-lg border mb-6">
-                <h3 className="text-sm font-bold text-gray-800 mb-2">{t('batchGenerator.outputSettings')}</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
-                    <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">Model</label>
-                        <select
-                            value={outputSettings.model}
-                            onChange={e => setOutputSettings(s => ({ ...s, model: e.target.value }))}
-                            className="form-select"
-                            disabled={isLoading}
-                        >
-                            <option value="gemini-3-pro-image-preview">Nano Banana Pro (Quality)</option>
-                            <option value="gemini-2.5-flash-image">Nano Banana (Speed)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.aspectRatioLabel')}</label>
-                        <select value={outputSettings.aspectRatio} onChange={e => setOutputSettings(s => ({ ...s, aspectRatio: e.target.value as any }))} className="form-select" disabled={isLoading}>
-                            <option value="preserve">{t('aspectRatio.preserve')}</option>
-                            <option value="9:16">{t('aspectRatio.portrait9_16')}</option>
-                            <option value="3:4">{t('aspectRatio.poster3_4')}</option>
-                            <option value="2:3">{t('aspectRatio.social2_3')}</option>
-                            <option value="1:1">{t('aspectRatio.square')}</option>
-                            <option value="4:3">{t('aspectRatio.photo4_3')}</option>
-                            <option value="16:9">{t('aspectRatio.landscape16_9')}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.formatLabel')}</label>
-                        <select value={outputSettings.format} onChange={e => setOutputSettings(s => ({ ...s, format: e.target.value as 'png' | 'jpeg' }))} className="form-select" disabled={isLoading}>
-                            <option value="jpeg">JPEG</option>
-                            <option value="png">PNG</option>
-                        </select>
-                    </div>
-                    <div style={{ visibility: outputSettings.format === 'jpeg' ? 'visible' : 'hidden' }}>
-                        <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.qualityLabel')} ({outputSettings.quality})</label>
-                        <input type="range" min="10" max="100" value={outputSettings.quality} onChange={e => setOutputSettings(s => ({ ...s, quality: Number(e.target.value) }))} disabled={isLoading} />
+            <main
+                className="flex-grow w-full max-w-7xl mx-auto p-6 overflow-y-auto"
+                onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
+                onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(true); }}
+                onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDraggingOver(false); }}
+                onDrop={(e) => {
+                    e.preventDefault(); e.stopPropagation(); setIsDraggingOver(false);
+                    handleFileSelect(e.dataTransfer.files);
+                }}
+            >
+                <div className="bg-white p-4 rounded-lg border mb-6">
+                    <h3 className="text-sm font-bold text-gray-800 mb-2">{t('batchGenerator.outputSettings')}</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Model</label>
+                            <select
+                                value={outputSettings.model}
+                                onChange={e => setOutputSettings(s => ({ ...s, model: e.target.value }))}
+                                className="form-select"
+                                disabled={isLoading}
+                            >
+                                <option value="gemini-3-pro-image-preview">Nano Banana Pro (Quality)</option>
+                                <option value="gemini-2.5-flash-image">Nano Banana (Speed)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.aspectRatioLabel')}</label>
+                            <select value={outputSettings.aspectRatio} onChange={e => setOutputSettings(s => ({ ...s, aspectRatio: e.target.value as any }))} className="form-select" disabled={isLoading}>
+                                <option value="preserve">{t('aspectRatio.preserve')}</option>
+                                <option value="9:16">{t('aspectRatio.portrait9_16')}</option>
+                                <option value="3:4">{t('aspectRatio.poster3_4')}</option>
+                                <option value="2:3">{t('aspectRatio.social2_3')}</option>
+                                <option value="1:1">{t('aspectRatio.square')}</option>
+                                <option value="4:3">{t('aspectRatio.photo4_3')}</option>
+                                <option value="16:9">{t('aspectRatio.landscape16_9')}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.formatLabel')}</label>
+                            <select value={outputSettings.format} onChange={e => setOutputSettings(s => ({ ...s, format: e.target.value as 'png' | 'jpeg' }))} className="form-select" disabled={isLoading}>
+                                <option value="jpeg">JPEG</option>
+                                <option value="png">PNG</option>
+                            </select>
+                        </div>
+                        <div style={{ visibility: outputSettings.format === 'jpeg' ? 'visible' : 'hidden' }}>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">{t('batchGenerator.qualityLabel')} ({outputSettings.quality})</label>
+                            <input type="range" min="10" max="100" value={outputSettings.quality} onChange={e => setOutputSettings(s => ({ ...s, quality: Number(e.target.value) }))} disabled={isLoading} />
+                        </div>
                     </div>
                 </div>
-            </div>
-            {(mode === 'photoshoot' && photoshootJobs.length === 0) || (mode === 'batch' && batchJobs.length === 0) ? (
-                renderUploadPlaceholder()
-            ) : (
-                mode === 'photoshoot' ? renderPhotoshootMode() : renderBatchMode()
-            )}
-            <input id="file-upload" type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileSelect(e.target.files)} />
-        </main>
-    </div>
-);
+                {(mode === 'photoshoot' && photoshootJobs.length === 0) || (mode === 'batch' && batchJobs.length === 0) ? (
+                    renderUploadPlaceholder()
+                ) : (
+                    mode === 'photoshoot' ? renderPhotoshootMode() : renderBatchMode()
+                )}
+                <input id="file-upload" type="file" multiple className="hidden" accept="image/*" onChange={(e) => handleFileSelect(e.target.files)} />
+            </main>
+        </div>
+    );
 });
 
 export default BatchGenerator;
