@@ -10,7 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-*.local
+# Environment variables (ВАЖНО: защита API ключей)
+.env
+.env.local
+.env.local.backup
+.env.production
+.env.*.local
 
 # Editor directories and files
 .vscode/*

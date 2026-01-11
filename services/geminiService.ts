@@ -236,18 +236,29 @@ const runImageEdit = async (
 
             if (proxyUrl) {
                 // Direct API call via proxy with correct Gemini REST API format
-                const requestBody = {
-                    contents: [{ parts }],
-                    generationConfig: {
-                        ...config,
-                        // Flatten nested config if needed
-                        ...(config.imageConfig || {})
-                    }
+                const requestBody: any = {
+                    contents: [{ parts }]
                 };
 
-                // Remove imageConfig from top level if it exists
-                if (requestBody.generationConfig.imageConfig) {
-                    delete requestBody.generationConfig.imageConfig;
+                // Add generation config if responseModalities is set
+                if (config.responseModalities) {
+                    requestBody.generationConfig = {
+                        responseModalities: config.responseModalities
+                    };
+                }
+
+                // Add image generation config separately
+                if (config.imageConfig) {
+                    requestBody.generationConfig = requestBody.generationConfig || {};
+                    requestBody.generationConfig.responseModalities = [Modality.IMAGE];
+
+                    // imageSize and aspectRatio go directly in generationConfig for REST API
+                    if (config.imageConfig.imageSize) {
+                        requestBody.generationConfig.imageSize = config.imageConfig.imageSize;
+                    }
+                    if (config.imageConfig.aspectRatio) {
+                        requestBody.generationConfig.aspectRatio = config.imageConfig.aspectRatio;
+                    }
                 }
 
                 const result = await geminiApiFetch(`/v1beta/models/${model}:generateContent`, requestBody);
