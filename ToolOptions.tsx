@@ -104,24 +104,24 @@ const ToolOptions: React.FC<ToolOptionsProps> = ({
     onApplyBrandStyle,
 }) => {
     const { t } = useLanguage();
-    
+
     const renderToolPanel = () => {
         if (isExporting) {
             return <ExportOptionsPanel onExport={onExport} isLoading={isLoading} />;
         }
-        
+
         switch (activeTool) {
             case 'chat':
                 // FIX: Passed missing mainImageFile and onEnhancePrompt props to ChatPanel.
-                return <ChatPanel 
-                    messages={chatMessages} 
+                return <ChatPanel
+                    messages={chatMessages}
                     onSendMessage={(prompt, files) => {
                         const filesToSend = currentImage ? [currentImage, ...files] : files;
                         onSendChatMessage(prompt, filesToSend);
-                    }} 
-                    isLoading={isLoading} 
-                    cost={cost} 
-                    mainImageFile={currentImage} 
+                    }}
+                    isLoading={isLoading}
+                    cost={cost}
+                    mainImageFile={currentImage}
                     onEnhancePrompt={onEnhancePrompt}
                 />;
             case 'filter':
@@ -157,15 +157,34 @@ const ToolOptions: React.FC<ToolOptionsProps> = ({
                 // FIX: Passed missing onEnhancePrompt prop to AnimatePanel.
                 return <AnimatePanel onAnimate={onAnimate} isLoading={isLoading} onEnhancePrompt={onEnhancePrompt} />;
             case 'expand':
-                return null; 
+                return null;
             default:
                 return <div className="text-center text-gray-500 p-4">{t('toolOptions.selectTool')}</div>;
         }
     };
 
+    const hasActiveTool = !!activeTool;
+
+    // On mobile, if no tool is active, don't show the panel at all to save space
+    if (!activeTool) {
+        return (
+            <aside className="hidden md:flex w-80 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex-shrink-0 flex-col p-4 overflow-y-auto">
+                <div className="text-center text-gray-500 dark:text-gray-400 p-4 mt-10">
+                    <h3 className="text-lg font-medium mb-2">{t('toolOptions.selectTool')}</h3>
+                    <p className="text-sm opacity-80">{t('toolOptions.selectToolDesc')}</p>
+                </div>
+            </aside>
+        );
+    }
+
     return (
-        <aside className="w-80 bg-white border-l border-gray-200 flex-shrink-0 flex flex-col p-4 overflow-y-auto">
-            {renderToolPanel()}
+        <aside className="w-full md:w-80 h-[45vh] md:h-full bg-white dark:bg-gray-800 md:border-l md:border-t-0 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 flex flex-col p-4 overflow-y-auto z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none pb-24 md:pb-4 transition-all order-3 md:order-2">
+            {/* Handle Bar for mobile to indicate draggable/swipeable (future enhancement) */}
+            <div className="md:hidden w-12 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4 flex-shrink-0"></div>
+
+            <div className="flex-grow overflow-y-auto hide-scrollbar">
+                {renderToolPanel()}
+            </div>
         </aside>
     );
 };

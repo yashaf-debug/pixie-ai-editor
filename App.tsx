@@ -757,7 +757,8 @@ const App: React.FC = () => {
             />
 
             {/* Main content area - add bottom padding on mobile for bottom toolbar */}
-            <main className="flex-grow flex flex-col h-full overflow-hidden relative pb-20 md:pb-0">
+            {/* Main content area - dynamic padding handled by ToolOptions existence or CSS */}
+            <main className="flex-grow flex flex-col h-full overflow-hidden relative">
               <EditorHeader
                 onUndo={handleUndo}
                 onRedo={handleRedo}
@@ -776,7 +777,7 @@ const App: React.FC = () => {
                 isLoading={isLoading}
               />
 
-              <div className="flex-grow relative overflow-hidden flex items-center justify-center">
+              <div className="flex-grow relative overflow-hidden flex items-center justify-center bg-gray-50/50 dark:bg-gray-900/50">
                 {currentImageFile && (
                   <EditorCanvas
                     ref={editorCanvasRef}
@@ -828,12 +829,9 @@ const App: React.FC = () => {
               brushSize={brushSize}
               onBrushSizeChange={setBrushSize}
               isMaskEmpty={!maskDataUrl}
-              layers={layers}
-              activeLayerId={activeLayerId}
-              onSetActiveLayer={setActiveLayerId}
-              onSetLayerVisibility={handleSetLayerVisibility}
-              onDeleteLayer={handleDeleteLayer}
-              onMoveLayer={handleMoveLayer}
+              history={history}
+              historyIndex={historyIndex}
+              onHistoryStepSelect={handleHistoryStepSelect}
               onAnimate={handleAnimateImage}
               cost={editCost}
               onEnhancePrompt={handleEnhancePrompt}
