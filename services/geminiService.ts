@@ -224,24 +224,8 @@ const runImageEdit = async (
             let response;
 
             if (proxyUrl) {
-                // Direct API call via proxy with correct Gemini REST API format
-                const requestBody: any = {
-                    contents: [{ parts }]
-                };
-
-                // Add generation config if responseModalities is set
-                if (config.responseModalities) {
-                    requestBody.generationConfig = {
-                        responseModalities: config.responseModalities
-                    };
-                }
-
-
-                // Note: imageSize and aspectRatio are NOT supported in Gemini REST API
-                // They are SDK-only features. Images will use model defaults.
-
-                const result = await geminiApiFetch(`/v1beta/models/${model}:generateContent`, requestBody);
-                response = result as GenerateContentResponse;
+                // Use Vercel API proxy (full SDK on server - ALL features supported!)
+                response = await geminiApiProxyFetch(model, { parts }, config);
             } else {
                 // Use SDK for direct calls
                 response = await getAi().models.generateContent({
