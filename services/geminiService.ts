@@ -74,7 +74,7 @@ const geminiApiProxyFetch = async (model: string, contents: any, config: any): P
 
 // Custom fetch wrapper for proxy support
 const geminiApiFetch = async (endpoint: string, requestBody: any): Promise<any> => {
-    const baseUrl = getBaseUrl();
+
     const apiKey = getApiKey();
 
     // Build URL with API key as query parameter (Gemini API standard)
