@@ -501,7 +501,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
     return (
         <div
             ref={canvasContainerRef}
-            className="relative w-full h-full flex items-center justify-center overflow-auto p-4 checkerboard-bg touch-manipulation"
+            className="relative w-full h-full flex items-center justify-center overflow-auto p-4 checkerboard-bg touch-none"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
