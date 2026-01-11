@@ -37,23 +37,23 @@ export interface EditorCanvasRef {
 }
 
 function centerAspectCrop(
-  mediaWidth: number,
-  mediaHeight: number,
-  aspect: number,
+    mediaWidth: number,
+    mediaHeight: number,
+    aspect: number,
 ) {
-  return centerCrop(
-    makeAspectCrop(
-      {
-        unit: '%',
-        width: 90,
-      },
-      aspect,
-      mediaWidth,
-      mediaHeight,
-    ),
-    mediaWidth,
-    mediaHeight,
-  );
+    return centerCrop(
+        makeAspectCrop(
+            {
+                unit: '%',
+                width: 90,
+            },
+            aspect,
+            mediaWidth,
+            mediaHeight,
+        ),
+        mediaWidth,
+        mediaHeight,
+    );
 }
 
 
@@ -89,7 +89,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
     const getFinalCanvasAsDataURL = useCallback(async (): Promise<string | null> => {
         const visibleLayers = layers.filter(l => l.visible);
         if (visibleLayers.length === 0) return null;
-    
+
         // Use the dimensions of the LAST visible layer (top-most).
         // This ensures that if the image was upscaled/enhanced, we export at the new, higher resolution.
         const topLayer = visibleLayers[visibleLayers.length - 1];
@@ -97,9 +97,9 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         topImg.src = topLayer.imageUrl;
         await new Promise(resolve => { topImg.onload = resolve; });
         const { naturalWidth, naturalHeight } = topImg;
-    
+
         if (naturalWidth === 0 || naturalHeight === 0) return null;
-    
+
         const finalCanvas = document.createElement('canvas');
         finalCanvas.width = naturalWidth;
         finalCanvas.height = naturalHeight;
@@ -109,7 +109,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         // Enable high-quality scaling
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-    
+
         for (const layer of visibleLayers) {
             const img = new Image();
             img.src = layer.imageUrl;
@@ -141,7 +141,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         // Ensure all elements are ready and we are on the initial layer
         if (container && img && img.naturalWidth > 0 && layers.length === 1 && layers[0].name === 'Original') {
             const { naturalWidth, naturalHeight } = img;
-            
+
             const viewport = container;
             const containerWidth = viewport.clientWidth - 32; // p-4
             const containerHeight = viewport.clientHeight - 32; // p-4
@@ -153,7 +153,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
             const widthRatio = containerWidth / naturalWidth;
             const heightRatio = containerHeight / naturalHeight;
             const newZoom = Math.min(widthRatio, heightRatio);
-            
+
             onZoomChange(newZoom);
         }
     }, [layers, onZoomChange]);
@@ -166,7 +166,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
             return () => clearTimeout(timer);
         }
     }, [imgLoaded, calculateInitialZoom]);
-    
+
     // Reset imgLoaded state when a new image is loaded (base layer id changes)
     useEffect(() => {
         setImgLoaded(false);
@@ -186,7 +186,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         }
         dataCanvasRef.current.width = image.naturalWidth;
         dataCanvasRef.current.height = image.naturalHeight;
-        
+
         const dataCtx = dataCanvasRef.current.getContext('2d');
         if (dataCtx) {
             dataCtx.fillStyle = 'black';
@@ -195,17 +195,17 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
     }, []);
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-      if (aspect && layers.length === 1) { // Only auto-crop on first load
-        const { width, height } = e.currentTarget;
-        onCropChange(centerAspectCrop(width, height, aspect), centerAspectCrop(width, height, aspect));
-      }
-      setImgLoaded(true);
-      setTimeout(setupCanvases, 50); 
+        if (aspect && layers.length === 1) { // Only auto-crop on first load
+            const { width, height } = e.currentTarget;
+            onCropChange(centerAspectCrop(width, height, aspect), centerAspectCrop(width, height, aspect));
+        }
+        setImgLoaded(true);
+        setTimeout(setupCanvases, 50);
     }
 
     useEffect(() => {
-        if(activeTool === 'erase' || activeTool === 'magic-wand') {
-             setTimeout(setupCanvases, 50); 
+        if (activeTool === 'erase' || activeTool === 'magic-wand') {
+            setTimeout(setupCanvases, 50);
         }
     }, [activeTool, setupCanvases]);
 
@@ -220,7 +220,7 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
             }
         }
     }, [maskDataUrl]);
-    
+
     // Effect to render the selection mask from Magic Wand or Erase tool
     useEffect(() => {
         const displayCanvas = displayCanvasRef.current;
@@ -238,17 +238,17 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         maskImage.onload = () => {
             // Clear previous drawings
             displayCtx.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
-            
+
             // Draw the black & white mask
             displayCtx.drawImage(maskImage, 0, 0, displayCanvas.width, displayCanvas.height);
-            
+
             // Use composite operation to color the white parts of the mask
             displayCtx.globalCompositeOperation = 'source-in';
-            
+
             // Fill with a semi-transparent red overlay to show the selection
             displayCtx.fillStyle = 'rgba(255, 0, 0, 0.5)';
             displayCtx.fillRect(0, 0, displayCanvas.width, displayCanvas.height);
-            
+
             // Reset for other drawing operations
             displayCtx.globalCompositeOperation = 'source-over';
         };
@@ -271,31 +271,31 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
             return { x: e.clientX - rect.left, y: e.clientY - rect.top };
         };
 
-        const drawOnCanvas = (from: {x:number, y:number}, to: {x:number, y:number}) => {
-             const displayCtx = displayCanvas.getContext('2d');
-             const dataCtx = dataCanvas.getContext('2d');
-             if (!displayCtx || !dataCtx) return;
+        const drawOnCanvas = (from: { x: number, y: number }, to: { x: number, y: number }) => {
+            const displayCtx = displayCanvas.getContext('2d');
+            const dataCtx = dataCanvas.getContext('2d');
+            if (!displayCtx || !dataCtx) return;
 
-             displayCtx.beginPath();
-             displayCtx.moveTo(from.x, from.y);
-             displayCtx.lineTo(to.x, to.y);
-             displayCtx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
-             displayCtx.lineWidth = brushSize;
-             displayCtx.lineCap = 'round';
-             displayCtx.lineJoin = 'round';
-             displayCtx.stroke();
-             
-             const scaleX = dataCanvas.width / displayCanvas.width;
-             const scaleY = dataCanvas.height / displayCanvas.height;
-             
-             dataCtx.beginPath();
-             dataCtx.moveTo(from.x * scaleX, from.y * scaleY);
-             dataCtx.lineTo(to.x * scaleX, to.y * scaleY);
-             dataCtx.strokeStyle = 'white';
-             dataCtx.lineWidth = brushSize * scaleX; 
-             dataCtx.lineCap = 'round';
-             dataCtx.lineJoin = 'round';
-             dataCtx.stroke();
+            displayCtx.beginPath();
+            displayCtx.moveTo(from.x, from.y);
+            displayCtx.lineTo(to.x, to.y);
+            displayCtx.strokeStyle = 'rgba(255, 0, 0, 0.7)';
+            displayCtx.lineWidth = brushSize;
+            displayCtx.lineCap = 'round';
+            displayCtx.lineJoin = 'round';
+            displayCtx.stroke();
+
+            const scaleX = dataCanvas.width / displayCanvas.width;
+            const scaleY = dataCanvas.height / displayCanvas.height;
+
+            dataCtx.beginPath();
+            dataCtx.moveTo(from.x * scaleX, from.y * scaleY);
+            dataCtx.lineTo(to.x * scaleX, to.y * scaleY);
+            dataCtx.strokeStyle = 'white';
+            dataCtx.lineWidth = brushSize * scaleX;
+            dataCtx.lineCap = 'round';
+            dataCtx.lineJoin = 'round';
+            dataCtx.stroke();
         };
 
         const handleMouseDown = (e: MouseEvent) => {
@@ -347,12 +347,12 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
 
         const naturalX = Math.round(displayX * scaleX);
         const naturalY = Math.round(displayY * scaleY);
-        
+
         if (naturalX >= 0 && naturalX <= img.naturalWidth && naturalY >= 0 && naturalY <= img.naturalHeight) {
             onMagicWandClick({ x: naturalX, y: naturalY });
         }
     };
-    
+
     // Find the index of the top-most visible layer to treat as reference
     const visibleLayersIndices = layers.map((l, i) => l.visible ? i : -1).filter(i => i !== -1);
     const topMostVisibleIndex = visibleLayersIndices.length > 0 ? visibleLayersIndices[visibleLayersIndices.length - 1] : 0;
@@ -420,17 +420,17 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
                         aspect={aspect}
                         className="max-w-full max-h-full"
                     >
-                       {imageStackContainer}
+                        {imageStackContainer}
                     </ReactCrop>
                 ) : (
                     <div
-                      className="relative"
-                      style={{ cursor: activeTool === 'magic-wand' ? 'crosshair' : activeTool === 'erase' ? 'crosshair' : 'default' }}
+                        className="relative"
+                        style={{ cursor: activeTool === 'magic-wand' ? 'crosshair' : activeTool === 'erase' ? 'crosshair' : 'default' }}
                     >
                         {imageStackContainer}
                     </div>
                 )}
-                 <canvas
+                <canvas
                     ref={displayCanvasRef}
                     className="absolute top-0 left-0 w-full h-full"
                     onClick={handleCanvasClick}
@@ -442,8 +442,46 @@ const EditorCanvas = forwardRef<EditorCanvasRef, EditorCanvasProps>(({
         );
     }
 
+    // Pinch to zoom logic
+    const touchStartDist = useRef<number | null>(null);
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (e.touches.length === 2) {
+            const dist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+            touchStartDist.current = dist;
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (e.touches.length === 2 && touchStartDist.current !== null) {
+            const dist = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
+
+            const delta = dist / touchStartDist.current;
+            const newZoom = Math.max(0.1, Math.min(5, zoom * delta)); // Limit zoom level
+
+            onZoomChange(newZoom);
+            touchStartDist.current = dist; // Update for continuous zoom
+        }
+    };
+
+    const handleTouchEnd = () => {
+        touchStartDist.current = null;
+    };
+
     return (
-        <div ref={canvasContainerRef} className="relative w-full h-full flex items-center justify-center overflow-auto p-4 checkerboard-bg">
+        <div
+            ref={canvasContainerRef}
+            className="relative w-full h-full flex items-center justify-center overflow-auto p-4 checkerboard-bg touch-manipulation"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+        >
             {layers.length > 0 && renderCanvasContent()}
             {isLoading && (
                 <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex flex-col items-center justify-center gap-4 animate-fade-in z-20">
