@@ -64,7 +64,20 @@ const App: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState('');
 
   // Brand Kit State
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
   const [brandKit, setBrandKit] = useState<BrandKit | null>(null);
+
+  // FIX: Added handleHistoryStepSelect function
+  const handleHistoryStepSelect = async (index: number) => {
+    if (index >= 0 && index < history.length) {
+      setHistoryIndex(index);
+      const historyItem = history[index];
+      // In a real app, you would load the state from the history item
+      // e.g., setLayers(historyItem.layers)
+      console.log('Restoring history step:', index);
+    }
+  };
 
   // Modals State
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
